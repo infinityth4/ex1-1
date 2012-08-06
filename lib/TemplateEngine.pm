@@ -8,8 +8,6 @@ use File::Basename;
 sub new{
 	my ($class,%location)=@_;
 	bless{%location},$class;
-	
-	
 }
 
 
@@ -18,7 +16,8 @@ sub render(%){
 	my (%location)=%{$location};
 	my $filename = basename($location{file});
 	my $dirname = dirname $location{file};
-	my $new=$dirname."/output.html";
+	
+	my $new=$dirname."/temp.html";
 	my (%var)=%{$var};
 	
 	open( OLD, "< $location{file}" )|| die "ファイルを開けません :$!\n";
@@ -34,13 +33,14 @@ sub render(%){
 
 	close( OLD );
 	close( NEW );
-	$filename=$dirname."/".$filename;
-	
-	open( NEW, "< $location{file}" );
+
+	open( NEW, "< $new" );
 	while ( <NEW> ) {
 		print $_;
 	}
 	
+	unlink $new;
+	return ;
 }
 
 1;
