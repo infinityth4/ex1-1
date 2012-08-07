@@ -16,31 +16,41 @@ sub render(%){
 	my (%location)=%{$location};
 	my $filename = basename($location{file});
 	my $dirname = dirname $location{file};
-	
 	my $new=$dirname."/temp.html";
 	my (%var)=%{$var};
 	
 	open( OLD, "< $location{file}" )|| die "ファイルを開けません :$!\n";
 	open( NEW, "> $new" );
-	while ( <OLD> ) {
-		
-		$_=~s/{% title %}/$var{title}/;
-		$_=~s/{% content %}/$var{content}/;
-		print NEW $_;
-		
-	}
 	
+	for my $key (keys %var){
+		$var{$key}=~s/&/&amp/g;
+		$var{$key}=~s/>/&gt/g;
+		$var{$key}=~s/</&lt/g;
+		$var{$key}=~s/"/&quot/g;
+	}
+	while ( <OLD> ) {
+		#print "\$key:$key\n";
+		
+		for my $key (keys %var){
+			$_=~s/{%\s$key\s%}/$var{$key}/;
+		
+		}
+		print NEW $_;
+	}
+
 
 	close( OLD );
 	close( NEW );
-
+	
 	open( NEW, "< $new" );
 	while ( <NEW> ) {
 		print $_;
 	}
-	
+	close(NEW);
+
 	unlink $new;
-	return ;
+return ;
 }
 
 1;
+
