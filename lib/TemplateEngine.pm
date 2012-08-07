@@ -29,7 +29,6 @@ sub render(%){
 		$var{$key}=~s/"/&quot/g;
 	}
 	while ( <OLD> ) {
-		#print "\$key:$key\n";
 		
 		for my $key (keys %var){
 			$_=~s/{%\s$key\s%}/$var{$key}/;
